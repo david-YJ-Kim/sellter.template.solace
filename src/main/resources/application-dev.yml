@@ -1,0 +1,16 @@
+solace:
+  java:
+    host: 52.79.64.176:55555
+    msg-vpn: MES
+    client-username: default
+    client-password: admin
+    client-name: eqp-app-0001
+    reconnnect-retries: 5
+    retries-per-host: 5
+server:
+  shutdown: graceful
+  lifecycle:
+    timeout-per-shutdown-phase: 30s
+application:
+  latch-count: 5
+  module-name: SVM_DEV_EAP
