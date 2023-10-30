@@ -1,11 +1,9 @@
-package com.slt.template.solace.config;
+package com.slt.template.config.solace;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.orm.jpa.JpaProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -14,23 +12,16 @@ import com.solacesystems.jcsmp.EndpointProperties;
 import com.solacesystems.jcsmp.JCSMPChannelProperties;
 import com.solacesystems.jcsmp.JCSMPProperties;
 
-//import async.controller.config.SessionConfiguration;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Component
-public class SessionConfiguration {
-	private static SessionConfiguration instance;
+public class SolaceSessionConfiguration {
+	private static SolaceSessionConfiguration instance;
 	Environment env;
 
-//	public static SessionConfiguration createSessionConfiguration(Environment env) {
-//		if (instance == null) {
-//			instance = new SessionConfiguration(env);
-//		}
-//		return instance;
-//	}
 
 	public enum AuthenticationScheme {
         BASIC,
@@ -54,32 +45,20 @@ public class SessionConfiguration {
 	@Value("${solace.java.client-name}")
     private String clientName;
 	
-	@Value("${solace.java.reconnnect-retries}")
-    private int reconnnectRetries;
+	@Value("${solace.java.reconnect-retries}")
+    private int reconnectRetries;
 	
 	@Value("${solace.java.retries-per-host}")
     private int retriesPerHost;
 	
-	@Value("${application.latch-count}")
-    private int latchCount;
-	
 	@Value("${application.module-name}")
     private String moduleName;
 
-	public SessionConfiguration(Environment env) {
+	public SolaceSessionConfiguration(Environment env) {
 		this.env = env;
 		instance = this;
-//		host = env.getProperty("solace.java.host");
-//		msgVpn = env.getProperty("solace.java.msg-vpn");
-//		clientUserName = env.getProperty("solace.java.client-username");
-//		clientPassWord = env.getProperty("solace.java.client-password");
-//		reconnnectRetries = Integer.parseInt(Objects.requireNonNull(env.getProperty("solace.java.reconnect-retries")));
-//		retriesPerHost = Integer.parseInt(Objects.requireNonNull(env.getProperty("solace.java.connect-retries-per-host")));
-//		clientName = env.getProperty("solace.java.client-name");
-//		moduleName = env.getProperty("application.module-name");
-//		latchCount = Integer.parseInt(Objects.requireNonNull(env.getProperty("application.latch-count")));
 	}
-	public static SessionConfiguration getSessionConfiguration() {
+	public static SolaceSessionConfiguration getSessionConfiguration() {
 		return instance;
 	}
 	
@@ -106,7 +85,7 @@ public class SessionConfiguration {
 
 		JCSMPChannelProperties chProp = new JCSMPChannelProperties();
 
-		chProp.setReconnectRetries(getReconnnectRetries()); // 세션 다운 시 재 연결 트라이 횟수
+		chProp.setReconnectRetries(getReconnectRetries()); // 세션 다운 시 재 연결 트라이 횟수
 		chProp.setConnectRetriesPerHost(getRetriesPerHost()); // 세션 리트라이 간격
 		properties.setProperty(JCSMPChannelProperties.RECONNECT_RETRIES, chProp);
 

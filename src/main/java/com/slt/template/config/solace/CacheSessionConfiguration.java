@@ -1,4 +1,4 @@
-package com.slt.template.solace.config;
+package com.slt.template.config.solace;
 
 import com.solacesystems.jcsmp.CacheLiveDataAction;
 

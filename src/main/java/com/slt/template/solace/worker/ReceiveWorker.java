@@ -1,4 +1,4 @@
-package com.slt.template.solace.broker;
+package com.slt.template.solace.worker;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
@@ -12,17 +12,15 @@ import com.solacesystems.jcsmp.JCSMPException;
 import com.solacesystems.jcsmp.JCSMPFactory;
 import com.solacesystems.jcsmp.JCSMPProperties;
 import com.solacesystems.jcsmp.JCSMPSession;
-import com.solacesystems.jcsmp.JCSMPStreamingPublishCorrelatingEventHandler;
 import com.solacesystems.jcsmp.Queue;
 import com.solacesystems.jcsmp.SDTMap;
 import com.solacesystems.jcsmp.TextMessage;
 import com.solacesystems.jcsmp.XMLMessageListener;
-import com.solacesystems.jcsmp.XMLMessageProducer;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class Receiver implements Runnable {
+public class ReceiveWorker implements Runnable {
 	private CountDownLatch latch;
     private JCSMPSession session;
     private ArrayList<String> queueList;
@@ -33,7 +31,7 @@ public class Receiver implements Runnable {
 	private String thread_name;
 	private String queue_name;
 
-    public Receiver(CountDownLatch latch, JCSMPSession session, String queueName, String module_name, String thread_name) {
+    public ReceiveWorker(CountDownLatch latch, JCSMPSession session, String queueName, String module_name, String thread_name) {
     	this.latch = latch;
     	this.session = session;
     	this.queue_name = queueName;
@@ -91,7 +89,7 @@ public class Receiver implements Runnable {
 	}
 
 	 public class MessageListener implements XMLMessageListener {
-        public MessageListener(Receiver receiver) {
+        public MessageListener(ReceiveWorker receiver) {
         }        
 
         @Override

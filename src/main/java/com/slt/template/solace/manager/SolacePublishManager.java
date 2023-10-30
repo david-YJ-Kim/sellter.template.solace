@@ -1,10 +1,11 @@
-package com.slt.template.solace.controller;
+package com.slt.template.solace.manager;
 
+import com.slt.template.solace.manager.handler.PublishEventHandler;
 import org.springframework.stereotype.Component;
 
 import com.slt.template.seqlib.SequenceManager;
 import com.slt.template.seqlib.util.SequenceManageUtil;
-import com.slt.template.solace.config.SessionConfiguration;
+import com.slt.template.config.solace.SolaceSessionConfiguration;
 import com.solacesystems.jcsmp.DeliveryMode;
 import com.solacesystems.jcsmp.JCSMPException;
 import com.solacesystems.jcsmp.JCSMPFactory;
@@ -19,16 +20,16 @@ import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class InterfaceSolacePub implements Runnable {
+public class SolacePublishManager implements Runnable {
 	
     private JCSMPProperties properties = new JCSMPProperties();
 
-    private static InterfaceSolacePub instance;
+    private static SolacePublishManager instance;
     private JCSMPSession session;    
     private Topic topic;
     
     //PubCallback Event class
-    private com.slt.template.solace.controller.PubEventHandler pubEventHandler = new com.slt.template.solace.controller.PubEventHandler();
+    private PublishEventHandler pubEventHandler = new PublishEventHandler();
 //    private String queue_name = "SVM_DEV_EAP_CMN_10";
     private String msg_id;
     private String eqp_id;
@@ -80,7 +81,7 @@ public class InterfaceSolacePub implements Runnable {
 		try {			
 			//SpringJCSMPFactory 생성
 //			springJcsmpFactory = new SpringJCSMPFactory(properties);
-			properties = SessionConfiguration.getSessionConfiguration().getProperty("PUB");
+			properties = SolaceSessionConfiguration.getSessionConfiguration().getProperty("PUB");
 			//SpringJCSMPFactory를 이용한 JCSMPSession 생성(JCSMPFactory 사용하는 것과 동일 -> session = JCSMPFactory.onlyInstance().createSession(properties);)
 			session = JCSMPFactory.onlyInstance().createSession(properties);
 			//session 연결 - Application별로 최소 연결 권장(쓰레드를 사용할 경우 공유 사용 권장)
@@ -98,10 +99,10 @@ public class InterfaceSolacePub implements Runnable {
 		}
 	}
 	
-	public static InterfaceSolacePub getInstance() throws JCSMPException {
+	public static SolacePublishManager getInstance() throws JCSMPException {
         // Create the instance if it doesn't exist
         if (instance == null) {
-            instance = new InterfaceSolacePub();
+            instance = new SolacePublishManager();
         }
         return instance;
     }

@@ -1,12 +1,10 @@
-package com.slt.template.solace.controller;
+package com.slt.template.solace.manager;
 
 import java.util.ArrayList;
 import java.util.concurrent.CountDownLatch;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import com.slt.template.solace.broker.Receiver;
-import com.slt.template.solace.config.SessionConfiguration;
+import com.slt.template.solace.worker.ReceiveWorker;
+import com.slt.template.config.solace.SolaceSessionConfiguration;
 import com.solacesystems.jcsmp.JCSMPFactory;
 import com.solacesystems.jcsmp.JCSMPProperties;
 import com.solacesystems.jcsmp.JCSMPSession;
@@ -15,7 +13,7 @@ import com.slt.template.solace.utill.ImportQueueList;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class InterfaceSolaceSub implements Runnable {
+public class SolaceReceiveManager implements Runnable {
 	private JCSMPProperties properties = new JCSMPProperties();
 	
     private JCSMPSession session;
@@ -44,7 +42,7 @@ public class InterfaceSolaceSub implements Runnable {
     			log.debug("Queue # "+queue_name);
     		}
     		
-    		properties = SessionConfiguration.getSessionConfiguration().getProperty("SUB");
+    		properties = SolaceSessionConfiguration.getSessionConfiguration().getProperty("SUB");
 
     		//SpringJCSMPFactory를 이용한 JCSMPSession 생성(JCSMPFactory 사용하는 것과 동일 -> session = JCSMPFactory.onlyInstance().createSession(properties);)
 			session = JCSMPFactory.onlyInstance().createSession(properties);
@@ -55,8 +53,8 @@ public class InterfaceSolaceSub implements Runnable {
 //			final Queue queue = JCSMPFactory.onlyInstance().createQueue(queue_name);
 			
 	    	for(int i=0; i<queueList.size(); i++) {
-				new Thread(new Receiver(latch, session, queueList.get(i), SessionConfiguration.getSessionConfiguration().getModuleName(),
-						"Receiver-"+SessionConfiguration.getSessionConfiguration().getModuleName()+"-"+i)).start();
+				new Thread(new ReceiveWorker(latch, session, queueList.get(i), SolaceSessionConfiguration.getSessionConfiguration().getModuleName(),
+						"Receiver-"+ SolaceSessionConfiguration.getSessionConfiguration().getModuleName()+"-"+i)).start();
 			}
    	
 	    	latch.await();
